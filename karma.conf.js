@@ -2,13 +2,28 @@
 // https://karma-runner.github.io/0.13/config/configuration-file.html
 
 module.exports = function (config) {
+  var reports = ['spec'],
+    browsers = ['PhantomJS'];
+
+  if (process.env.HTML_REPORT == '1') {
+    reports.push('html');
+    reports.push('karma-remap-istanbul');
+  }
+
+  if (process.env.ALL_BROWSERS == '1') {
+    browsers.push('Chrome');
+  }
+
   config.set({
     basePath: '',
     frameworks: ['jasmine', 'angular-cli'],
     plugins: [
       require('karma-jasmine'),
+      require('karma-phantomjs-launcher'),
       require('karma-chrome-launcher'),
       require('karma-remap-istanbul'),
+      require('karma-htmlfile-reporter'),
+      require('karma-spec-reporter'),
       require('angular-cli/plugins/karma')
     ],
     files: [
@@ -27,12 +42,20 @@ module.exports = function (config) {
       config: './angular-cli.json',
       environment: 'dev'
     },
-    reporters: ['progress', 'karma-remap-istanbul'],
+    htmlReporter: {
+      outputFile: 'reports/result/index.html',
+      pageTitle: 'Unit Tests',
+      subPageTitle: 'A sample project description',
+      groupSuites: true,
+      useCompactStyle: true,
+      useLegacyStyle: true
+    },
+    reporters: reports,
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: browsers,
     singleRun: false
   });
 };
